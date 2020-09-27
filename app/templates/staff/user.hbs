@@ -287,8 +287,8 @@
                             <div class="pt3 pb3 relative flex items-center {{unless this.copyAdminKey.isRunning "hide-child-instant"}}">
                                 {{#if this.user.api_token}}
                                     <GhTextInput                                        
-                                        @value={{readonly this.user.api_token}}                                        
-                                    readonly disabled />
+                                        @value={{readonly this.user.full_api_token}}                                        
+                                    readonly />
                                     <div class="absolute top-4 right-0 flex items-stretch child">
                                         
                                         <button type="button" {{action "confirmRegenerateKeyModal" "api_token"}} class="ba b--lightgrey-d1 br3 pa1 pl2 pr2 flex items-center mr2 bg-white" data-tooltip="Regenerate">

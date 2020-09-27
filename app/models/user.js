@@ -38,6 +38,9 @@ export default BaseModel.extend(ValidationEngine, {
     tour: attr('json-string'),
 
     api_token: attr(),
+    full_api_token: computed('id', 'api_token', function(){
+        return this.id + ':' + this.api_token;
+    }),
 
     ghostPaths: service(),
     ajax: service(),
