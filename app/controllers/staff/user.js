@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
+import copyTextToClipboard from 'ghost-admin/utils/copy-text-to-clipboard';
 import isNumber from 'ghost-admin/utils/isNumber';
 import validator from 'validator';
 import windowProxy from 'ghost-admin/utils/window-proxy';
@@ -28,6 +29,9 @@ export default Controller.extend({
     showUplaodImageModal: false,
     _scratchFacebook: null,
     _scratchTwitter: null,
+
+    showRegenerateKeyModal: false,
+    isApiKeyRegenerated: false,
 
     saveHandlers: taskGroup().enqueue(),
 
@@ -328,7 +332,20 @@ export default Controller.extend({
             this.set('user.ne2Password', password);
             this.get('user.hasValidated').removeObject('ne2Password');
             this.get('user.errors').remove('ne2Password');
-        }
+        },
+
+        confirmRegenerateKeyModal() {      
+            this.set('showRegenerateKeyModal', true);
+            this.set('isApiKeyRegenerated', false);
+        },
+
+        cancelRegenerateKeyModal() {   
+            this.set('showRegenerateKeyModal', false);
+        },
+
+        regeneratePersonalToken() {    
+            this.set('isApiKeyRegenerated', true);
+        } 
     },
 
     _exportDb(filename) {
@@ -449,5 +466,10 @@ export default Controller.extend({
                 this.notifications.showAPIError(error, {key: 'user.update'});
             }
         }
-    }).group('saveHandlers')
+    }).group('saveHandlers'),
+
+    copyApiToken: task(function* () {
+        copyTextToClipboard(this.user.api_token);
+        yield timeout(this.isTesting ? 50 : 3000);
+    })
 });

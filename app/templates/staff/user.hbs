@@ -281,8 +281,40 @@
                                 {{gh-count-characters this.user.bio}}
                             </p>
                         </GhFormGroup>
-
+                        {{#if this.isOwnProfile}}
+                        <GhFormGroup>
+                            <label for="user-bio">Personal API Token</label>
+                            <div class="pt3 pb3 relative flex items-center {{unless this.copyAdminKey.isRunning "hide-child-instant"}}">
+                                {{#if this.user.api_token}}
+                                    <GhTextInput                                        
+                                        @value={{readonly this.user.api_token}}                                        
+                                    readonly disabled />
+                                    <div class="absolute top-4 right-0 flex items-stretch child">
+                                        
+                                        <button type="button" {{action "confirmRegenerateKeyModal" "api_token"}} class="ba b--lightgrey-d1 br3 pa1 pl2 pr2 flex items-center mr2 bg-white" data-tooltip="Regenerate">
+                                            {{svg-jar "reload" class="w4 h4 stroke-midgrey"}}
+                                        </button>
+                                        <button type="button" {{action (perform this.copyApiToken)}} class="bg-black-70 f8 pa1 pr3 pl3 br3 white fw4 flex items-center">
+                                            {{#if this.copyApiToken.isRunning}}
+                                                {{svg-jar "check-circle" class="w3 v-mid mr2 stroke-white"}} Copied
+                                            {{else}}
+                                                Copy
+                                            {{/if}}
+                                        </button>
+                                    </div>
+                                {{else}}
+                                    <GhTaskButton type="button" @task={{this.generateToken}} class="bg-white ba b--lightgrey-d1 br3 pa1 pl2 pr2 flex items-center mr2">
+                                        {{svg-jar "reload" class="w4 h4 stroke-midgrey"}} Generate API Token
+                                    </GhTaskButton>
+                                {{/if}}
+                            </div>
+                            {{#if isApiKeyRegenerated}}
+                                <div class="green nt3 mb2"> Personal API token was successfully regenerated </div>
+                            {{/if}}
+                        </GhFormGroup>
+                        {{/if}}
                     </fieldset>
+                    
                 </div>
 
             </form> {{! user details form }}
@@ -351,3 +383,11 @@
         </div>
     </section>
 </section>
+
+
+{{#if this.showRegenerateKeyModal}}
+     <GhFullscreenModal @modal="regenerate-personal-token"   
+        @confirm={{action "regeneratePersonalToken"}}
+         @close={{action "cancelRegenerateKeyModal"}}
+         @modifier="action wide" />
+ {{/if}}
